@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.liao.springdev.config.LoggingAspectAutoConfiguration,\
+  com.liao.springdev.listener.StartupApplicationListener
