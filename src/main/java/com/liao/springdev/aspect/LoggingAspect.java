@@ -42,6 +42,14 @@ public class LoggingAspect {
     private static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
     private static ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
 
+    private static final int MAX_CACHE_SIZE = 1000;
+
+    private static final Map<String, Integer> lineNumberCache = new LinkedHashMap<String, Integer>(MAX_CACHE_SIZE, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, Integer> eldest) {
+            return size() > MAX_CACHE_SIZE;
+        }
+    };
 
     @Pointcut("execution(public * com..*Controller.*(..))")
     public void webLog() {
@@ -71,7 +79,7 @@ public class LoggingAspect {
         String fileName = className.substring(className.lastIndexOf(".") + 1) + ".java";
         int lineNumber = 1;
         try {
-            lineNumber = findLineNumber(findJavaFilePath(className), methodName);
+            lineNumber = findLineNumber(className, methodName);
         } catch (IOException ignored) {
         }
 
@@ -88,22 +96,14 @@ public class LoggingAspect {
         return logMessage;
     }
 
-    private static final int MAX_CACHE_SIZE = 1000;
 
-    private static final Map<String, Integer> lineNumberCache = new LinkedHashMap<String, Integer>(MAX_CACHE_SIZE, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<String, Integer> eldest) {
-            return size() > MAX_CACHE_SIZE;
+
+    private static int findLineNumber(String className, String methodName) throws IOException {
+        if (lineNumberCache.containsKey(className + methodName)) {
+            return lineNumberCache.get(className + methodName);
         }
-    };
-
-
-    private static int findLineNumber(String filePath, String methodName) throws IOException {
-        if (lineNumberCache.containsKey(filePath + methodName)) {
-            return lineNumberCache.get(filePath + methodName);
-        }
-        int lineNumber = findLineNumber0(filePath, methodName);
-        lineNumberCache.put(filePath + methodName, lineNumber);
+        int lineNumber = findLineNumber0(findJavaFilePath(className), methodName);
+        lineNumberCache.put(className + methodName, lineNumber);
         return lineNumber;
     }
 
