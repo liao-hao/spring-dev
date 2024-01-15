@@ -39,9 +39,8 @@ public class LoggingAspect {
     );
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
-    private static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    private static ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-
+    private static final ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    private static final ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
     private static final int MAX_CACHE_SIZE = 1000;
 
     private static final Map<String, Integer> lineNumberCache = new LinkedHashMap<String, Integer>(MAX_CACHE_SIZE, 0.75f, true) {
@@ -96,8 +95,6 @@ public class LoggingAspect {
         return logMessage;
     }
 
-
-
     private static int findLineNumber(String className, String methodName) throws IOException {
         if (lineNumberCache.containsKey(className + methodName)) {
             return lineNumberCache.get(className + methodName);
@@ -108,7 +105,7 @@ public class LoggingAspect {
     }
 
     private static int findLineNumber0(String filePath, String methodName) throws IOException {
-        Pattern pattern = Pattern.compile("\\s*" + methodName + "\\s*\\(");
+        Pattern pattern = Pattern.compile("(?<!=)\\s* " + methodName + "\\s*\\(");
         Matcher matcher = pattern.matcher("");
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath))) {
             String line;
@@ -123,6 +120,7 @@ public class LoggingAspect {
         }
         return 1; // Method not found
     }
+
 
     private static String findJavaFilePath(String className) {
         String classFilePath = ClassLoader.getSystemResource("").getPath();
