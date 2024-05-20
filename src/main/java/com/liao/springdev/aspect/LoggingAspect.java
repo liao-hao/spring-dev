@@ -23,7 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,10 +61,9 @@ public class LoggingAspect {
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         String logMessage = getLogMessage(joinPoint);
-        logger.info(logMessage);
         printArgs(joinPoint);
         Object result = joinPoint.proceed();
-
+        logger.info(logMessage);
         logger.info("RESPONSE : " + objectMapper.writeValueAsString(result));
         logger.info("SPEND TIME : " + (System.currentTimeMillis() - startTime));
         return result;
@@ -123,9 +125,9 @@ public class LoggingAspect {
 
 
     private static String findJavaFilePath(String className) {
-        String classFilePath = ClassLoader.getSystemResource("").getPath();
-        String classPathRoot = classFilePath.substring(1, classFilePath.indexOf("/target/classes/"));
-        String javaFilePath = classPathRoot + "/src/main/java/" + className.replace('.', '/') + ".java";
+        ClassLoader classLoader = LoggingAspect.class.getClassLoader();
+        String classFilePath = classLoader.getResource(className.replace('.', '/') + ".class").getPath();
+        String javaFilePath = classFilePath.replace("target/classes", "src/main/java").replace(".class", ".java");
         return javaFilePath;
     }
 
