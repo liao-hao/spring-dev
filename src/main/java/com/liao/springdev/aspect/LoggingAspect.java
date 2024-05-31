@@ -59,13 +59,14 @@ public class LoggingAspect {
 
     @Around("webLog()")
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        logger.info("============================================================================================================================");
         long startTime = System.currentTimeMillis();
         String logMessage = getLogMessage(joinPoint);
         printArgs(joinPoint);
         Object result = joinPoint.proceed();
         logger.info(logMessage);
-        logger.info("RESPONSE : " + objectMapper.writeValueAsString(result));
-        logger.info("SPEND TIME : " + (System.currentTimeMillis() - startTime));
+        logger.info("RESPONSE : {}", objectMapper.writeValueAsString(result));
+        logger.info("SPEND TIME : {}", System.currentTimeMillis() - startTime);
         return result;
     }
 
@@ -84,7 +85,7 @@ public class LoggingAspect {
         } catch (IOException ignored) {
         }
 
-        String logMessage = String.format("CLASS_METHOD : %s.%s(%s:%s)\nURL : %s %s | IP : %s \nPARAMETER: %s ARGS : %s",
+        String logMessage = String.format("\nCLASS_METHOD : %s.%s(%s:%s)\n%s %s | IP : %s \nPARAMETER: %s ARGS : %s",
                 className,
                 methodName,
                 fileName,

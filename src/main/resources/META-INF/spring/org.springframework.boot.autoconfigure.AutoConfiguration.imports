@@ -1,2 +1,5 @@
+## spring3自动配置
+
 com.liao.springdev.config.LoggingAspectAutoConfiguration
+com.liao.springdev.config.PluginConfiguration
 com.liao.springdev.listener.StartupApplicationListener

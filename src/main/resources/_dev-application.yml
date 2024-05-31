@@ -1,0 +1,43 @@
+spring:
+  redis:
+    pool:
+      max-idle: 10
+      min-idle: 1
+      max-active: 10
+      max-wait: -1
+  datasource:
+    druid:
+      initial-size: 0
+      min-idle: 1
+      maxActive: 3
+      maxWait: 60000
+      phyMaxUseCount: 2000
+      logAbandoned: false
+      stat-view-servlet:
+        enabled: false
+      filter:
+        wall:
+          config:
+            multi-statement-allow: false
+            none-base-statement-allow: false
+#  main:
+#    lazy-initialization: true
+task:
+  pool:
+    # 核心线程池数
+    corePoolSize: 1
+    #最大线程
+    maxPoolSize: 4
+    #队列容量
+    queueCapacity: 100
+    #空闲线程存活时间
+    keepAliveSeconds: 300
+springfox:
+  documentation: OFF
+
+
+print:
+  profiles:
+    # 检查配置优先是否生效
+    first: dev-application.yml
+    dev: dev-application.yml

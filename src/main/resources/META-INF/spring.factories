@@ -1,3 +1,7 @@
+# spring2  自动配置
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.liao.springdev.config.LoggingAspectAutoConfiguration,\
+  com.liao.springdev.config.LoggingAspectAutoConfiguration
+
+org.springframework.context.ApplicationListener=\
+  com.liao.springdev.listener.DevApplicationYmlListener,\
   com.liao.springdev.listener.StartupApplicationListener
